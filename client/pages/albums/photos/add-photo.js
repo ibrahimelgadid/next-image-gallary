@@ -1,3 +1,4 @@
+import Loading from "@/components/layouts/Loading";
 import { faUpload } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import axios from "axios";
@@ -8,13 +9,18 @@ const AddPhoto = () => {
   const [photos, setPhotos] = useState([]);
   const [photosFile, setPhotosFile] = useState("");
   const [error, seterror] = useState(null);
+  const [loading, setloading] = useState(false);
 
   const router = useRouter();
 
   const handleSubmit = async (e) => {
+    setloading(true);
+
     e.preventDefault();
     if (!photos.length) {
-      return seterror("Must upload at least one photo");
+      seterror("Must upload at least one photo");
+      setloading(false);
+      return;
     }
     const photosFormData = new FormData();
 
@@ -27,7 +33,8 @@ const AddPhoto = () => {
         "http://localhost:5000/api/photos/id/" + router.query.id,
         photosFormData
       );
-      router.push("/albums/" + router.query.id);
+      await router.push("/albums/" + router.query.id);
+      setloading(true);
     } catch (error) {
       console.log(error);
     }
@@ -87,8 +94,9 @@ const AddPhoto = () => {
           <button
             className="block w-full  bg-green-700 my-4 p-2 rounded-md text-lg "
             type="submit"
+            disabled={loading}
           >
-            Submit
+            {loading ? <Loading /> : "Submit"}
           </button>
         </form>
       </div>

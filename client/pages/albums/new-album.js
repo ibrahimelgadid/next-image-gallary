@@ -3,26 +3,32 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faUpload } from "@fortawesome/free-solid-svg-icons";
 import axios from "axios";
 import { useRouter } from "next/router";
+import Loading from "@/components/layouts/Loading";
 
 const NewAlbum = () => {
   const [title, setTitle] = useState("");
   const [thumbnail, setThumbnail] = useState("");
   const [thumbnailImage, setThumbnailImage] = useState("");
   const [error, seterror] = useState(null);
+  const [loading, setloading] = useState(false);
 
   const router = useRouter();
 
   const handleSubmit = async (e) => {
+    setloading(true);
     e.preventDefault();
     if (!title || title.length < 3 || !thumbnail) {
-      return seterror("All fields are required");
+      setloading(false);
+      seterror("All fields are required");
+      return;
     }
     const albumFormData = new FormData();
     albumFormData.append("title", title);
     albumFormData.append("thumbnail", thumbnailImage);
     try {
       await axios.post("http://localhost:5000/api/albums", albumFormData);
-      router.push("/albums");
+      await router.push("/albums");
+      setloading(false);
     } catch (error) {
       console.log(error);
     }
@@ -83,8 +89,9 @@ const NewAlbum = () => {
           <button
             className="bg-green-700 py-1 px-2 rounded-md text-lg "
             type="submit"
+            disabled={loading}
           >
-            Submit
+            {loading ? <Loading /> : "Submit"}
           </button>
         </form>
       </div>

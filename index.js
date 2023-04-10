@@ -14,6 +14,11 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
 app.use(morgan("dev"));
 
+// app.use(express.static(path.join(__dirname, "./client/build")));
+// app.get("*", (req, res, next) => {
+//   res.sendFile(path.join(__dirname, "./client/build/"));
+// });
+
 app.use("/api/albums", albums);
 app.use("/api/photos", photos);
 
